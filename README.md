@@ -1,4 +1,4 @@
-# nakalab_docker_container
+# nakalab_docker_container `Ubuntu Humble`
 　ROS2 Humble 用 Docker イメージビルダー。Ubuntu で使用することが前提となっています。
 
 ## QuickStart
