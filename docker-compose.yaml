@@ -1,0 +1,75 @@
+services:
+  humble-cpu:
+    container_name: humble-cpu
+    image: gai313/nakalab_docker:humble-cpu-base
+    privileged: true
+    ipc: host
+    network_mode: host
+    tty: true
+    stdin_open: true
+    user: "${UID}:${GID}"
+    build:
+      context: .
+      dockerfile: Dockerfile.cpu
+      args:
+        - USER_NAME=${USER_NAME}
+        - GROUP_NAME=${GROUP_NAME}
+        - UID=${UID}
+        - GID=${GID}
+        - PASSWORD=${PASSWORD}
+        - WS_NAME=${WS_NAME}
+    environment:
+      - DISPLAY=${DISPLAY}
+      - PULSE_COOKIE=/tmp/pulse/cookie
+      - PULSE_SERVER=unix:/tmp/pulse/native
+      - ROS_DOMAIN_ID=${ROS_DOMAIN_ID}
+      - WS_NAME=${WS_NAME}
+    volumes:
+      - /run/user/1000/pulse/native:/tmp/pulse/native
+      - ~/.config/pulse/cookie:/tmp/pulse/cookie:ro
+      - /tmp/.X11-unix:/tmp/.X11-unix
+      - $HOME/.Xauthority/:/root/.Xauthority
+      - /dev:/dev
+    devices:
+       - /dev:/dev
+
+  humble-gpu:
+    container_name: humble-gpu
+    image: gai313/nakalab_docker:humble-gpu-base
+    privileged: true
+    ipc: host
+    network_mode: host
+    tty: true
+    stdin_open: true
+    user: "${UID}:${GID}"
+    build:
+      context: .
+      dockerfile: Dockerfile.gpu
+      args:
+        - USER_NAME=${USER_NAME}
+        - GROUP_NAME=${GROUP_NAME}
+        - UID=${UID}
+        - GID=${GID}
+        - PASSWORD=${PASSWORD}
+        - WS_NAME=${WS_NAME}
+    environment:
+      - DISPLAY=${DISPLAY}
+      - PULSE_COOKIE=/tmp/pulse/cookie
+      - PULSE_SERVER=unix:/tmp/pulse/native
+      - ROS_DOMAIN_ID=${ROS_DOMAIN_ID}
+      - WS_NAME=${WS_NAME}
+    volumes:
+      - /run/user/1000/pulse/native:/tmp/pulse/native
+      - ~/.config/pulse/cookie:/tmp/pulse/cookie:ro
+      - /tmp/.X11-unix:/tmp/.X11-unix
+      - $HOME/.Xauthority/:/root/.Xauthority
+      - /dev:/dev
+    devices:
+       - /dev:/dev
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
